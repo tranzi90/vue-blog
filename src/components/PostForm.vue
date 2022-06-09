@@ -21,11 +21,8 @@
 </template>
 
 <script>
-import MyButton from "@/components/UI/MyButton"
-import MyInput from "@/components/UI/MyInput";
 
 export default {
-  components: {MyInput, MyButton},
   data() {
     return {
       post: {
@@ -51,11 +48,5 @@ export default {
 form {
   display: flex;
   flex-direction: column;
-}
-input {
-  width: 100%;
-  border: 1px solid teal;
-  padding: 10px 15px;
-  margin-top: 15px;
 }
 </style>
