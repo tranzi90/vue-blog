@@ -1,6 +1,7 @@
 <template>
   <div class="app">
     <h1>Posts Page</h1>
+    <my-button @click="fetchPosts">Get posts</my-button>
     <my-button
       @click="showDialog"
       style="margin: 15px 0;"
@@ -22,16 +23,13 @@
 <script>
 import PostForm from "@/components/PostForm"
 import PostList from "@/components/PostList"
+import axios from "axios"
 
 export default {
   components: {PostForm, PostList},
   data() {
     return {
-      posts: [
-        {id: 1, title: 'JavaScript', body: 'Post description'},
-        {id: 2, title: 'JavaScript 2', body: 'Post description 2'},
-        {id: 3, title: 'JavaScript 3', body: 'Post description 3'},
-      ],
+      posts: [],
       dialogVisible: false
     }
   },
@@ -45,7 +43,18 @@ export default {
     },
     showDialog() {
       this.dialogVisible = true
+    },
+    async fetchPosts() {
+      try {
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10')
+        this.posts = response.data
+      } catch (e) {
+        alert('Error')
+      }
     }
+  },
+  mounted() {
+    this.fetchPosts()
   }
 }
 </script>
