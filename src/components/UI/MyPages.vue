@@ -17,11 +17,6 @@
 <script>
 export default {
   name: "MyPages",
-  // data() {
-  //   return {
-  //     currentPage: 1
-  //   }
-  // },
   props: {
     totalPages: {
       type: Number
@@ -29,12 +24,7 @@ export default {
     currentPage: {
       type: Number
     }
-  },
-  // methods: {
-  //   changePage(page) {
-  //     this.currentPage = page
-  //   }
-  // }
+  }
 }
 </script>
 

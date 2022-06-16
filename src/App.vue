@@ -27,11 +27,12 @@
         v-if="!isPostsLoading"
     />
     <div v-else>Loading posts...</div>
-    <my-pages
-        :totalPages="totalPages"
-        :currentPage="currentPage"
-        @changePage="changePage"
-    />
+    <div ref="observer" class="observer"></div>
+<!--    <my-pages-->
+<!--        :totalPages="totalPages"-->
+<!--        :currentPage="currentPage"-->
+<!--        @changePage="changePage"-->
+<!--    />-->
   </div>
 </template>
 
@@ -69,9 +70,9 @@ export default {
     showDialog() {
       this.dialogVisible = true
     },
-    changePage(page) {
-      this.currentPage = page
-    },
+    // changePage(page) {
+    //   this.currentPage = page
+    // },
     async fetchPosts() {
       try {
         this.isPostsLoading = true
@@ -88,10 +89,36 @@ export default {
       } finally {
         this.isPostsLoading = false
       }
+    },
+    async loadMorePosts() {
+      try {
+        this.currentPage++
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+          params: {
+            _page: this.currentPage,
+            _limit: this.limit
+          }
+        })
+        this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
+        this.posts = [...this.posts, ...response.data]
+      } catch (e) {
+        alert('Error')
+      }
     }
   },
   mounted() {
     this.fetchPosts()
+
+    const options = {
+      rootMargin: '0px',
+      threshold: 1.0
+    }
+    const callback = (entries) => {
+      if (entries[0].isIntersecting && this.currentPage < this.totalPages)
+        this.loadMorePosts()
+    }
+    const observer = new IntersectionObserver(callback, options)
+    observer.observe(this.$refs.observer)
   },
   computed: {
     sortedPosts() {
@@ -105,9 +132,9 @@ export default {
     }
   },
   watch: {
-    currentPage() {
-      this.fetchPosts()
-    }
+    // currentPage() {
+    //   this.fetchPosts()
+    // }
   }
 }
 </script>
@@ -125,5 +152,9 @@ export default {
     margin: 15px 0;
     display: flex;
     justify-content: space-between;
+  }
+  .observer {
+    height: 30px;
+    background: green;
   }
 </style>
