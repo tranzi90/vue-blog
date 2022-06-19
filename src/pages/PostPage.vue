@@ -1,6 +1,10 @@
 <template>
   <div>
     <h1>{{ $store.state.likes }}</h1>
+    <div>
+      <my-button @click="$store.commit('incrementLikes')">Like</my-button>
+      <my-button @click="$store.commit('decrementLikes')">DisLike</my-button>
+    </div>
     <h1>Posts Page</h1>
     <my-input
         v-model="searchQuery"
@@ -40,24 +44,13 @@
 <script>
 import PostForm from "@/components/PostForm"
 import PostList from "@/components/PostList"
-import axios from "axios"
+// import axios from "axios"
 
 export default {
   components: {PostForm, PostList},
   data() {
     return {
-      posts: [],
-      dialogVisible: false,
-      isPostsLoading: false,
-      selectedSort: '',
-      searchQuery: '',
-      currentPage: 1,
-      limit: 10,
-      totalPages: 0,
-      sortOptions: [
-        {value: 'title', name: 'By name'},
-        {value: 'body', name: 'By content'},
-      ]
+
     }
   },
   methods: {
@@ -74,53 +67,14 @@ export default {
     // changePage(page) {
     //   this.currentPage = page
     // },
-    async fetchPosts() {
-      try {
-        this.isPostsLoading = true
-        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-          params: {
-            _page: this.currentPage,
-            _limit: this.limit
-          }
-        })
-        this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
-        this.posts = response.data
-      } catch (e) {
-        alert('Error')
-      } finally {
-        this.isPostsLoading = false
-      }
-    },
-    async loadMorePosts() {
-      try {
-        this.currentPage++
-        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
-          params: {
-            _page: this.currentPage,
-            _limit: this.limit
-          }
-        })
-        this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
-        this.posts = [...this.posts, ...response.data]
-      } catch (e) {
-        alert('Error')
-      }
-    }
+
   },
   mounted() {
     this.fetchPosts()
 
   },
   computed: {
-    sortedPosts() {
-      return [...this.posts].sort((post1, post2) => {
-        return post1[this.selectedSort]?.localeCompare(post2[this.selectedSort])
-      })
-    },
-    sortedAndSearchedPosts() {
-      return this.sortedPosts.filter(post =>
-          post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
-    }
+
   },
   watch: {
     // currentPage() {
