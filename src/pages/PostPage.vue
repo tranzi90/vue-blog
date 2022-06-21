@@ -7,7 +7,8 @@
     </div>
     <h1>Posts Page</h1>
     <my-input
-        v-model="searchQuery"
+        :model-value="searchQuery"
+        @update:model-value="setSearchQuery"
         placeholder="Search..."
     />
     <div class="app__btns">
@@ -17,7 +18,8 @@
         Create post
       </my-button>
       <my-select
-          v-model="selectedSort"
+          :model-value="selectedSort"
+          @update:model-value="setSelectedSort"
           :options="sortOptions"
       />
     </div>
@@ -44,16 +46,25 @@
 <script>
 import PostForm from "@/components/PostForm"
 import PostList from "@/components/PostList"
-// import axios from "axios"
+import {mapActions, mapGetters, mapMutations, mapState} from "vuex"
 
 export default {
   components: {PostForm, PostList},
   data() {
     return {
-
+      dialogVisible: false
     }
   },
   methods: {
+    ...mapMutations({
+      setPosts: 'post/setPosts',
+      setSearchQuery: 'post/setSearchQuery',
+      setSelectedSort: 'post/setSelectedSort',
+    }),
+    ...mapActions({
+      loadMorePosts: "post/loadMorePosts",
+      fetchPosts: 'post/fetchPosts'
+    }),
     createPost(post) {
       this.posts.push(post)
       this.dialogVisible = false
@@ -64,22 +75,28 @@ export default {
     showDialog() {
       this.dialogVisible = true
     },
-    // changePage(page) {
-    //   this.currentPage = page
-    // },
-
   },
   mounted() {
     this.fetchPosts()
-
   },
   computed: {
-
+    ...mapState({
+      posts: state => state.post.posts,
+      isPostsLoading: state => state.post.isPostsLoading,
+      selectedSort: state => state.post.selectedSort,
+      searchQuery: state => state.post.searchQuery,
+      currentPage: state => state.post.currentPage,
+      limit: state => state.post.limit,
+      totalPages: state => state.post.totalPages,
+      sortOptions: state => state.post.sortOptions
+    }),
+    ...mapGetters({
+      sortedPosts: 'post/sortedPosts',
+      sortedAndSearchedPosts: 'post/sortedAndSearchedPosts',
+    }),
   },
   watch: {
-    // currentPage() {
-    //   this.fetchPosts()
-    // }
+
   }
 }
 </script>

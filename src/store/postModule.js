@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "axios"
 
 export const postModule = {
     state: () => ({
@@ -16,7 +16,7 @@ export const postModule = {
     }),
     getters: {
         sortedPosts(state) {
-            return [state.posts].sort((post1, post2) => {
+            return [...state.posts].sort((post1, post2) => {
                 return post1[state.selectedSort]?.localeCompare(post2[state.selectedSort])
             })
         },
@@ -78,5 +78,6 @@ export const postModule = {
                 alert('Error')
             }
         }
-    }
+    },
+    namespaced: 'post'
 }
