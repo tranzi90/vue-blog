@@ -1,10 +1,5 @@
 <template>
   <div>
-    <h1>{{ $store.state.likes }}</h1>
-    <div>
-      <my-button @click="$store.commit('incrementLikes')">Like</my-button>
-      <my-button @click="$store.commit('decrementLikes')">DisLike</my-button>
-    </div>
     <h1>Posts Page</h1>
     <my-input
         :model-value="searchQuery"
@@ -46,58 +41,38 @@
 <script>
 import PostForm from "@/components/PostForm"
 import PostList from "@/components/PostList"
-import {mapActions, mapGetters, mapMutations, mapState} from "vuex"
+import {usePosts} from "@/hooks/usePosts"
+import {useSortedPosts} from "@/hooks/useSortedPosts";
+import {useSortedAndSearchedPosts} from "@/hooks/useSortedAndSearchedPosts";
+// import {mapActions, mapGetters, mapMutations, mapState} from "vuex"
 
 export default {
   components: {PostForm, PostList},
   data() {
     return {
-      dialogVisible: false
+      dialogVisible: false,
+      sortOptions: [
+        {value: 'title', name: 'By name'},
+        {value: 'body', name: 'By content'},
+      ]
     }
   },
-  methods: {
-    ...mapMutations({
-      setPosts: 'post/setPosts',
-      setSearchQuery: 'post/setSearchQuery',
-      setSelectedSort: 'post/setSelectedSort',
-    }),
-    ...mapActions({
-      loadMorePosts: "post/loadMorePosts",
-      fetchPosts: 'post/fetchPosts'
-    }),
-    createPost(post) {
-      this.posts.push(post)
-      this.dialogVisible = false
-    },
-    removePost(post) {
-      this.posts = this.posts.filter(p => p.id !== post.id)
-    },
-    showDialog() {
-      this.dialogVisible = true
-    },
-  },
-  mounted() {
-    this.fetchPosts()
-  },
-  computed: {
-    ...mapState({
-      posts: state => state.post.posts,
-      isPostsLoading: state => state.post.isPostsLoading,
-      selectedSort: state => state.post.selectedSort,
-      searchQuery: state => state.post.searchQuery,
-      currentPage: state => state.post.currentPage,
-      limit: state => state.post.limit,
-      totalPages: state => state.post.totalPages,
-      sortOptions: state => state.post.sortOptions
-    }),
-    ...mapGetters({
-      sortedPosts: 'post/sortedPosts',
-      sortedAndSearchedPosts: 'post/sortedAndSearchedPosts',
-    }),
-  },
-  watch: {
+  setup(props) {
+    const {posts, isPostsLoading, totalPages} = usePosts(10)
+    const {sortedPosts, selectedSort} = useSortedPosts(posts)
+    const {searchQuery, sortedAndSearchedPosts} = useSortedAndSearchedPosts(sortedPosts)
 
-  }
+    return {
+      posts,
+      totalPages,
+      isPostsLoading,
+      sortedPosts,
+      selectedSort,
+      searchQuery,
+      sortedAndSearchedPosts
+    }
+  },
+
 }
 </script>
 
