@@ -2,8 +2,7 @@
   <div>
     <h1>Posts Page</h1>
     <my-input
-        :model-value="searchQuery"
-        @update:model-value="setSearchQuery"
+        v-model="searchQuery"
         placeholder="Search..."
     />
     <div class="app__btns">
@@ -13,8 +12,7 @@
         Create post
       </my-button>
       <my-select
-          :model-value="selectedSort"
-          @update:model-value="setSelectedSort"
+          v-model="selectedSort"
           :options="sortOptions"
       />
     </div>
@@ -42,8 +40,8 @@
 import PostForm from "@/components/PostForm"
 import PostList from "@/components/PostList"
 import {usePosts} from "@/hooks/usePosts"
-import {useSortedPosts} from "@/hooks/useSortedPosts";
-import {useSortedAndSearchedPosts} from "@/hooks/useSortedAndSearchedPosts";
+import {useSortedPosts} from "@/hooks/useSortedPosts"
+import {useSortedAndSearchedPosts} from "@/hooks/useSortedAndSearchedPosts"
 // import {mapActions, mapGetters, mapMutations, mapState} from "vuex"
 
 export default {
@@ -57,7 +55,7 @@ export default {
       ]
     }
   },
-  setup(props) {
+  setup() {
     const {posts, isPostsLoading, totalPages} = usePosts(10)
     const {sortedPosts, selectedSort} = useSortedPosts(posts)
     const {searchQuery, sortedAndSearchedPosts} = useSortedAndSearchedPosts(sortedPosts)
@@ -72,7 +70,6 @@ export default {
       sortedAndSearchedPosts
     }
   },
-
 }
 </script>
 
